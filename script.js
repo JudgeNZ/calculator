@@ -5,6 +5,7 @@ let calcResult = '';
 let currentOperator = null;
 let refreshScreen = false;
 let previousAction = '';
+let equalsClicked = false;
 
 const resultScreen = document.getElementById('result');
 const operationScreen = document.getElementById('input');
@@ -55,9 +56,14 @@ function numButtonClick(e){
     
     currentInput += numberClicked;
     
+    
     if(currentOperator === null){
         operationScreen.textContent = currentInput;
 
+    } else if(equalsClicked === true){
+        clearButtonClick()
+        currentInput += numberClicked;
+        operationScreen.textContent = currentInput;
     } else {
         calcResult = operate(Number(result), Number(currentInput),currentOperator);
         operationScreen.textContent =  `${result} ${currentOperator} ${currentInput}`;
@@ -74,6 +80,7 @@ function equalsButtonClick(e){
     operationScreen.textContent =  `${result}`;
     resultScreen.textContent = '';
     previousAction = "op";
+    equalsClicked = true;
 }
 
 function clearButtonClick(){
@@ -84,6 +91,7 @@ function clearButtonClick(){
     calcResult = '';
     currentOperator = null;  
     previousAction = '';
+    equalsClicked = false;
 }
 
 function deleteButtonClick(){
