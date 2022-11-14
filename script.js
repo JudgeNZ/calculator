@@ -37,7 +37,9 @@ function opButtonClick(e){
     } 
 
     if (currentOperator !== null && previousAction === "num"){
-        result = calcResult;
+        result = operate(Number(result), Number(currentInput),currentOperator);
+        operationScreen.textContent =  `${result} ${currentOperator}`;
+        resultScreen.textContent = result;
     }
 
     currentOperator = document.getElementById(e.target.id).textContent; //get by class?
@@ -56,13 +58,7 @@ function numButtonClick(e){
     if(currentOperator === null){
         operationScreen.textContent = currentInput;
 
-    } else if (previousAction === "op") {
-        result = operate(Number(result), Number(currentInput),currentOperator);
-        operationScreen.textContent =  `${result} ${currentOperator} ${currentInput}`;
-        resultScreen.textContent = result;
-    
     } else {
-
         calcResult = operate(Number(result), Number(currentInput),currentOperator);
         operationScreen.textContent =  `${result} ${currentOperator} ${currentInput}`;
         resultScreen.textContent = calcResult;
@@ -77,7 +73,7 @@ function equalsButtonClick(e){
     result = operate(Number(result), Number(currentInput),currentOperator);
     operationScreen.textContent =  `${result}`;
     resultScreen.textContent = '';
-    previousAction = 'eq';
+    previousAction = "op";
 }
 
 function clearButtonClick(){
@@ -86,14 +82,31 @@ function clearButtonClick(){
     currentInput = '';
     result = '';
     calcResult = '';
-    currentOperator = null;
-    
+    currentOperator = null;  
     previousAction = '';
 }
 
 function deleteButtonClick(){
-    currentInput = currentInput.substring(0,currentInput.length-1);
-    previousAction = 'del';
+    if (currentInput.length > 0){
+        currentInput = currentInput.substring(0,currentInput.length-1);
+        previousAction = "num";
+        calcResult = operate(Number(result), Number(currentInput),currentOperator);
+        operationScreen.textContent =  `${result} ${currentOperator} ${currentInput}`;
+        resultScreen.textContent = calcResult; 
+
+    } 
+}
+
+function decimalButtonClick(){
+    if (!currentInput.includes(".") && previousAction === 'num'){
+        currentInput += ".";
+        if (result !== '') {
+            operationScreen.textContent =  `${result} ${currentOperator} ${currentInput}`;
+            resultScreen.textContent = calcResult;
+        } else {
+            operationScreen.textContent =  `${currentInput}`;
+        }
+    }
 }
 
 function calculate(){   
@@ -105,9 +118,6 @@ function calculate(){
     } else {
         result = operate(Number(result), Number(currentInput),currentOperator);
     }
-    
-
-
 }
 
 
@@ -130,7 +140,7 @@ function operate(a,b,operator){
             output = 0;
     }
 
-    return output;
+    return output.toFixed(3);
 }
 
 //display
@@ -189,8 +199,14 @@ function initialise(){
     const eqButtons = Array.from(document.querySelectorAll('.equals-button'));
     eqButtons.forEach(eqButton => eqButton.addEventListener('click', equalsButtonClick));
 
-    const clearButtons = Array.from(document.getElementById('clear-button'));
-    clearButtons.forEach(clearButton => clearqButton.addEventListener('click', clearButtonClick));
+    const clearButton = document.getElementById('clear-button');
+    clearButton.addEventListener('click', clearButtonClick);
+
+    const deleteButton = document.getElementById('delete-button');
+    deleteButton.addEventListener('click', deleteButtonClick);
+
+    const decimalButton = document.getElementById('.-button');
+    decimalButton.addEventListener('click', decimalButtonClick);
 
     //keyboard events
     //window.addEventListener('keydown', parseKeydown);
